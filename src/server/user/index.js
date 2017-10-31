@@ -1,3 +1,5 @@
+// @flow
+
 const Router = require('express-promise-router');
 const User = require('./user');
 

@@ -1,7 +1,9 @@
-const express = require('express');
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
-const mountRoutes = require('./routes');
+// @flow
+
+import express from 'express';
+import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import mountRoutes from './routes';
 
 const app = express();
 
