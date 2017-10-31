@@ -4,10 +4,11 @@
 /node_modules
 
 # testing
-/coverage
+/flow-coverage
 
 # production
-/build
+/db
+/src/client/build
 
 # misc
 .DS_Store

@@ -1,10 +1,12 @@
 // @flow
 
+import dotenv from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mountRoutes from './routes';
 
+dotenv.config();
 const app = express();
 
 // create morgan middleware
