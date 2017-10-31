@@ -1,25 +1,56 @@
 // @flow
 
-// const db = require('../db');
+const db = require('../db');
 const User = require('./user');
 
-test('User#create', () => {
-  const attributes = { id: 1, name: 'User' };
-  User.create(attributes).then(user => expect(user).toEqual(attributes));
-});
+afterAll(() => db.end());
 
-test('User#get', () => {
-  const attributes = { id: 1, name: 'User' };
-  User.get(attributes.id).then(user => expect(user).toEqual(attributes));
-});
+describe('User', () => {
+  describe('#getAll', () => {
+    test('returns array', async () => {
+      expect.assertions(1);
+      const users = await User.getAll();
+      expect(users).toBeInstanceOf(Array);
+    });
+  });
 
-test('User#update', () => {
-  const attributes = { id: 1, name: 'New User' };
-  User.update(attributes.id, attributes).then(user => expect(user).toEqual(attributes));
-});
+  describe('#create', () => {
+    test('returns User', async () => {
+      expect.assertions(1);
+      const user = { name: 'User' };
+      const newUser = await User.create(user);
+      expect(newUser).toEqual(expect.objectContaining(user));
+    });
+  });
 
-test('User#delete', () => {
-  const attributes = { id: 1, name: 'User' };
-  User.delete(attributes.id).then(() =>
-    User.get(attributes.id).then(user => expect(user).toBeUndefined()));
+  describe('#get', () => {
+    test('returns User', async () => {
+      expect.assertions(1);
+      const user = { name: 'User' };
+      const expectedUser = await User.create(user);
+      const actualUser = await User.get(expectedUser.id);
+      expect(actualUser).toEqual(expectedUser);
+    });
+  });
+
+  describe('#update', () => {
+    test('updates User', async () => {
+      expect.assertions(1);
+      const user = await User.create({ name: 'User' });
+      const newUser = { name: 'New User' };
+      const expectedUser = await User.update(user.id, newUser);
+      const actualUser = await User.get(expectedUser.id);
+      expect(actualUser).toEqual(expectedUser);
+    });
+  });
+
+  describe('#delete', () => {
+    test('deletes User', async () => {
+      expect.assertions(1);
+      const user = await User.create({ name: 'User' });
+      await User.delete(user.id);
+      const deletedUser = await User.get(user.id);
+      expect(deletedUser).toBeUndefined();
+    });
+  });
 });

@@ -7,6 +7,11 @@ type User = {
   name: string
 };
 
+type MaybeUser = {
+  id?: number;
+  name: string;
+};
+
 // get all Users
 const getAll = (): Promise<User[]> => db.query('SELECT * FROM users').then(result => result.rows);
 
@@ -15,15 +20,15 @@ const get = (userId: number): Promise<User> =>
   db.query('SELECT * FROM users WHERE id = $1', [userId]).then(result => result.rows[0]);
 
 // create new User
-const create = (attributes: User): Promise<User> =>
+const create = (user: MaybeUser): Promise<User> =>
   db
-    .query('INSERT INTO users(name) VALUES($1) RETURNING *', [attributes.name])
+    .query('INSERT INTO users(name) VALUES($1) RETURNING *', [user.name])
     .then(result => result.rows[0]);
 
 // update existing User by id
-const update = (userId: number, attributes: User): Promise<User> =>
+const update = (userId: number, user: MaybeUser): Promise<User> =>
   db
-    .query('UPDATE users SET name = $2 WHERE id = $1 RETURNING *', [userId, attributes.name])
+    .query('UPDATE users SET name = $2 WHERE id = $1 RETURNING *', [userId, user.name])
     .then(result => result.rows[0]);
 
 // delete existing User by id

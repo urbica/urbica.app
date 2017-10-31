@@ -1,5 +1,7 @@
 # urbica.io
 
+[![CircleCI](https://circleci.com/gh/urbica/urbica.io.svg?style=svg)](https://circleci.com/gh/urbica/urbica.io)
+
 ## Development
 
 Installing dependencies

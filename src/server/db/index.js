@@ -12,7 +12,8 @@ type ResultSet = {
 };
 
 type PoolClient = {
-  query: (text: string, values: ?Array<any>) => Promise<ResultSet>
+  query: (text: string, values: ?Array<any>) => Promise<ResultSet>,
+  end: () => Promise<void>
 };
 
 const db: PoolClient = new Pool({
