@@ -1,13 +1,14 @@
 // @flow
 
-import dotenv from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mountRoutes from './routes';
 
-dotenv.config();
 const app = express();
+
+// disable X-Powered-By
+app.disable('x-powered-by');
 
 // create morgan middleware
 app.use(morgan('combined'));
@@ -21,4 +22,4 @@ app.use(bodyParser.json());
 // mount app routes
 mountRoutes(app);
 
-app.listen(3000);
+module.exports = app;

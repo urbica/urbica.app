@@ -1,7 +1,7 @@
 // @flow
 
 const Router = require('express-promise-router');
-const User = require('./user');
+const User = require('./user.model');
 
 const router = new Router();
 
@@ -19,7 +19,7 @@ router.get('/:userId', async (req, res) => {
     const { userId } = req.params;
     const user = await User.get(userId);
     if (!user) {
-      res.status(404).send(`Couldn't find user with id ${userId}`);
+      res.status(404).send({ message: `Couldn't find User with 'id'=${userId}` });
     } else {
       res.send(user);
     }

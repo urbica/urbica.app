@@ -17,8 +17,7 @@
     "db:migrate": "db-migrate -m ./src/server/db/migrations --config ./src/server/db/database.json up",
     "db:rollback": "db-migrate -m ./src/server/db/migrations --config ./src/server/db/database.json down",
     "db:reset": "db-migrate -m ./src/server/db/migrations --config ./src/server/db/database.json reset",
-    "start:server": "node dist/server/app.js",
-    "start:server:dev": "nodemon --exec babel-node src/server/app.js",
+    "start": "nodemon --exec babel-node index.js",
     "commit": "git-cz",
     "release": "standard-version"
   },
@@ -70,6 +69,7 @@
     "flow-typed": "2.2.1",
     "jest": "21.2.1",
     "nodemon": "1.12.1",
-    "standard-version": "4.2.0"
+    "standard-version": "4.2.0",
+    "supertest": "3.0.0"
   }
 }
