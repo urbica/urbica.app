@@ -36,6 +36,8 @@ Create `.env` file
 cp example.env .env
 ```
 
+[Writing migrations](https://db-migrate.readthedocs.io/en/latest/API/SQL/).
+
 Running migrations
 
 ```shell
@@ -51,7 +53,7 @@ yarn db:rollback
 Starting dev server
 
 ```shell
-yarn start:server:dev
+yarn start
 ```
 
 Running tests

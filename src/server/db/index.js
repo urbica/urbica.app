@@ -8,7 +8,7 @@ type Row = {
 };
 
 type ResultSet = {
-  rows: Array<Row>
+  rows: Row[]
 };
 
 type PoolClient = {

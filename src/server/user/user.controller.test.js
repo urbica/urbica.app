@@ -3,14 +3,18 @@
 const request = require('supertest');
 const db = require('../db');
 const app = require('../app');
+const Team = require('../team/team.model');
 
 afterAll(() => db.end());
 
 describe('User Controller', () => {
+  let team;
+  beforeEach(async () => (team = await Team.create({ name: 'Team' })));
+
   describe('#index', () => {
     test('returns array', async () =>
       request(app)
-        .get('/users')
+        .get(`/teams/${team.id}/users`)
         .expect('Content-Type', /json/)
         .expect(200)
         .then((res) => {
@@ -22,7 +26,7 @@ describe('User Controller', () => {
     test('returns User', async () => {
       const user = { name: 'User' };
       const newUser = await request(app)
-        .post('/users')
+        .post(`/teams/${team.id}/users`)
         .send(user)
         .expect('Content-Type', /json/)
         .expect(201)
@@ -37,14 +41,14 @@ describe('User Controller', () => {
       const user = { name: 'User' };
 
       const expectedUser = await request(app)
-        .post('/users')
+        .post(`/teams/${team.id}/users`)
         .send(user)
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
       const actualUser = await request(app)
-        .get(`/users/${expectedUser.id}`)
+        .get(`/teams/${team.id}/users/${expectedUser.id}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .then(res => res.body);
@@ -56,22 +60,22 @@ describe('User Controller', () => {
   describe('#update', () => {
     test('updates User', async () => {
       const user = await request(app)
-        .post('/users')
+        .post(`/teams/${team.id}/users`)
         .send({ name: 'User' })
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
-      const newUser = { name: 'New User' };
+      const newUser = { ...user, name: 'New User' };
       const expectedUser = await request(app)
-        .put(`/users/${user.id}`)
+        .put(`/teams/${team.id}/users/${user.id}`)
         .send(newUser)
         .expect('Content-Type', /json/)
         .expect(200)
         .then(res => res.body);
 
       const actualUser = await request(app)
-        .get(`/users/${expectedUser.id}`)
+        .get(`/teams/${team.id}/users/${expectedUser.id}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .then(res => res.body);
@@ -83,19 +87,19 @@ describe('User Controller', () => {
   describe('#delete', () => {
     test('deletes User', async () => {
       const user = await request(app)
-        .post('/users')
+        .post(`/teams/${team.id}/users`)
         .send({ name: 'User' })
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
       await request(app)
-        .delete(`/users/${user.id}`)
+        .delete(`/teams/${team.id}/users/${user.id}`)
         .expect(204)
         .then(res => res.body);
 
       const error = await request(app)
-        .get(`/users/${user.id}`)
+        .get(`/teams/${team.id}/users/${user.id}`)
         .expect('Content-Type', /json/)
         .expect(404)
         .then(res => res.body);

@@ -4,35 +4,42 @@ const db = require('../db');
 
 type User = {
   id: number,
+  team_id: number,
   name: string
 };
 
 type MaybeUser = {
-  id?: number;
-  name: string;
+  id?: number,
+  team_id: number,
+  name: string
 };
 
-// get all Users
-const getAll = (): Promise<User[]> => db.query('SELECT * FROM users').then(result => result.rows);
+// Get all Team Users
+const getAll = (teamId: number): Promise<User[]> =>
+  db.query('SELECT * FROM users WHERE team_id = $1', [teamId]).then(result => result.rows);
 
-// get User by id
+// Get User by id
 const get = (userId: number): Promise<User> =>
   db.query('SELECT * FROM users WHERE id = $1', [userId]).then(result => result.rows[0]);
 
-// create new User
+// Create new Team User
 const create = (user: MaybeUser): Promise<User> =>
   db
-    .query('INSERT INTO users(name) VALUES($1) RETURNING *', [user.name])
+    .query('INSERT INTO users(team_id, name) VALUES($1, $2) RETURNING *', [user.team_id, user.name])
     .then(result => result.rows[0]);
 
-// update existing User by id
+// Update existing Team User
 const update = (userId: number, user: MaybeUser): Promise<User> =>
   db
-    .query('UPDATE users SET name = $2 WHERE id = $1 RETURNING *', [userId, user.name])
+    .query('UPDATE users SET team_id = $2, name = $3 WHERE id = $1 RETURNING *', [
+      userId,
+      user.team_id,
+      user.name
+    ])
     .then(result => result.rows[0]);
 
-// delete existing User by id
-const del = (userId: number): Promise<any> => db.query('DELETE FROM users WHERE id = $1', [userId]);
+// Delete existing Team User
+const del = (userId: number) => db.query('DELETE FROM users WHERE id = $1', [userId]);
 
 module.exports = {
   getAll,
