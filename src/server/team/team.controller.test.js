@@ -2,9 +2,17 @@
 
 const request = require('supertest');
 const db = require('../db');
-const app = require('../app');
+const server = require('../app');
 
-afterAll(() => db.end());
+let app;
+beforeAll(() => {
+  app = server.listen();
+});
+
+afterAll(() => {
+  db.end();
+  app.close();
+});
 
 describe('Team Controller', () => {
   describe('#index', () => {
@@ -51,6 +59,16 @@ describe('Team Controller', () => {
 
       expect(actualTeam).toEqual(expectedTeam);
     });
+
+    test('returns 404 for nonexistent Team', async () => {
+      const response = await request(app)
+        .get('/teams/nonexistent')
+        .expect('Content-Type', /text\/plain/)
+        .expect(404)
+        .then(res => res.text);
+
+      expect(response).toEqual(expect.stringMatching(/Not Found/));
+    });
   });
 
   describe('#update', () => {
@@ -94,13 +112,13 @@ describe('Team Controller', () => {
         .expect(204)
         .then(res => res.body);
 
-      const error = await request(app)
+      const response = await request(app)
         .get(`/teams/${team.id}`)
-        .expect('Content-Type', /json/)
+        .expect('Content-Type', /text\/plain/)
         .expect(404)
-        .then(res => res.body);
+        .then(res => res.text);
 
-      expect(error.message).toEqual(expect.stringMatching(/Couldn't find Team/));
+      expect(response).toEqual(expect.stringMatching(/Couldn't find Team/));
     });
   });
 });

@@ -2,10 +2,18 @@
 
 const request = require('supertest');
 const db = require('../db');
-const app = require('../app');
+const server = require('../app');
 const Team = require('../team/team.model');
 
-afterAll(() => db.end());
+let app;
+beforeAll(() => {
+  app = server.listen();
+});
+
+afterAll(() => {
+  db.end();
+  app.close();
+});
 
 describe('User Controller', () => {
   let team;
@@ -55,6 +63,16 @@ describe('User Controller', () => {
 
       expect(actualUser).toEqual(expectedUser);
     });
+
+    test('returns 404 for nonexistent User', async () => {
+      const response = await request(app)
+        .get(`/teams/${team.id}/nonexistent`)
+        .expect('Content-Type', /text\/plain/)
+        .expect(404)
+        .then(res => res.text);
+
+      expect(response).toEqual(expect.stringMatching(/Not Found/));
+    });
   });
 
   describe('#update', () => {
@@ -98,13 +116,13 @@ describe('User Controller', () => {
         .expect(204)
         .then(res => res.body);
 
-      const error = await request(app)
+      const response = await request(app)
         .get(`/teams/${team.id}/users/${user.id}`)
-        .expect('Content-Type', /json/)
+        .expect('Content-Type', /text\/plain/)
         .expect(404)
-        .then(res => res.body);
+        .then(res => res.text);
 
-      expect(error.message).toEqual(expect.stringMatching(/Couldn't find User/));
+      expect(response).toEqual(expect.stringMatching(/Couldn't find User/));
     });
   });
 });

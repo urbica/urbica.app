@@ -1,83 +1,66 @@
 // @flow
 
-const Router = require('express-promise-router');
-const User = require('./user.model');
+import Router from 'koa-router';
+import User from './user.model';
 
 const router = new Router();
 
-router.get('/:teamId(\\d+)/users', async (req, res) => {
-  try {
-    const teamId = parseInt(req.params.teamId, 10);
-    const users = await User.getAll(teamId);
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+router.get('/', async (ctx) => {
+  const teamId = parseInt(ctx.params.teamId, 10);
+  const users = await User.getAll(teamId);
+  ctx.body = users;
 });
 
-router.get('/:teamId(\\d+)/users/:userId(\\d+)', async (req, res) => {
-  try {
-    const userId = parseInt(req.params.userId, 10);
-    const user = await User.get(userId);
-    if (!user) {
-      res.status(404).send({ message: `Couldn't find User with 'id'=${userId}` });
-    } else {
-      res.send(user);
-    }
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+router.get('/:userId(\\d+)', async (ctx) => {
+  const userId = parseInt(ctx.params.userId, 10);
+  const user = await User.get(userId);
+
+  ctx.assert(user, 404, `Couldn't find User with 'id'=${userId}`);
+  ctx.body = user;
 });
 
-router.post('/:teamId(\\d+)/users', async (req, res) => {
-  try {
-    const teamId = parseInt(req.params.teamId, 10);
-    const attributes = req.body;
-    // ensure that we are creating User in the corresponding Team
-    attributes.team_id = teamId;
-    const user = await User.create(attributes);
-    res.status(201).send(user);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+router.post('/', async (ctx) => {
+  const teamId = parseInt(ctx.params.teamId, 10);
+  const attributes = ctx.request.body;
+  // ensure that we are creating User in the corresponding Team
+  attributes.team_id = teamId;
+  const user = await User.create(attributes);
+
+  ctx.status = 201;
+  ctx.body = user;
 });
 
-router.put('/:teamId(\\d+)/users/:userId(\\d+)', async (req, res) => {
-  try {
-    const teamId = parseInt(req.params.teamId, 10);
-    const userId = parseInt(req.params.userId, 10);
-    const attributes = req.body;
-    // ensure that we are updating User in the corresponding Team
-    if (attributes.team_id === teamId) {
-      const user = await User.update(userId, attributes);
-      res.send(user);
-    } else {
-      res.status(406).send({
-        message: `User 'team_id'=${attributes.team_id} does not match with corresponding Team 'id'=${teamId}`
-      });
-    }
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+router.put('/:userId(\\d+)', async (ctx) => {
+  const teamId = parseInt(ctx.params.teamId, 10);
+  const userId = parseInt(ctx.params.userId, 10);
+  const attributes = ctx.request.body;
+
+  // ensure that we are updating User in the corresponding Team
+  ctx.assert(
+    attributes.team_id === teamId,
+    406,
+    `User 'team_id'=${attributes.team_id} does not match with corresponding Team 'id'=${teamId}`
+  );
+
+  const user = await User.update(userId, attributes);
+  ctx.body = user;
 });
 
-router.delete('/:teamId(\\d+)/users/:userId(\\d+)', async (req, res) => {
-  try {
-    const teamId = parseInt(req.params.teamId, 10);
-    const userId = parseInt(req.params.userId, 10);
-    const user = await User.get(userId);
-    // ensure that we are deleting User in the corresponding Team
-    if (user.team_id === teamId) {
-      await User.delete(userId);
-      res.status(204).end();
-    } else {
-      res.status(406).send({
-        message: `User 'team_id'=${user.team_id} does not match with corresponding Team 'id'=${teamId}`
-      });
-    }
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+router.delete('/:userId(\\d+)', async (ctx) => {
+  const teamId = parseInt(ctx.params.teamId, 10);
+  const userId = parseInt(ctx.params.userId, 10);
+  const user = await User.get(userId);
+
+  // ensure that we are deleting User in the corresponding Team
+  ctx.assert(
+    user.team_id === teamId,
+    406,
+    `User 'team_id'=${user.team_id} does not match with corresponding Team 'id'=${teamId}`
+  );
+
+  await User.delete(userId);
+  ctx.status = 204;
+  ctx.body = undefined;
 });
 
-module.exports = router;
+export default router;
