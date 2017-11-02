@@ -15,14 +15,14 @@ afterAll(() => {
   app.close();
 });
 
-describe('User Controller', () => {
+describe('Project Controller', () => {
   let team;
   beforeEach(async () => (team = await Team.create({ name: 'Team' })));
 
   describe('#index', () => {
     test('returns array', async () =>
       request(app)
-        .get(`/teams/${team.id}/users`)
+        .get(`/teams/${team.id}/projects`)
         .expect('Content-Type', /json/)
         .expect(200)
         .then((res) => {
@@ -31,42 +31,42 @@ describe('User Controller', () => {
   });
 
   describe('#create', () => {
-    test('returns User', async () => {
-      const user = { name: 'User' };
-      const newUser = await request(app)
-        .post(`/teams/${team.id}/users`)
-        .send(user)
+    test('returns Project', async () => {
+      const project = { name: 'Project' };
+      const newProject = await request(app)
+        .post(`/teams/${team.id}/projects`)
+        .send(project)
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
-      expect(newUser).toEqual(expect.objectContaining(user));
+      expect(newProject).toEqual(expect.objectContaining(project));
     });
   });
 
   describe('#get', () => {
-    test('returns User', async () => {
-      const user = { name: 'User' };
+    test('returns Project', async () => {
+      const project = { name: 'Project' };
 
-      const expectedUser = await request(app)
-        .post(`/teams/${team.id}/users`)
-        .send(user)
+      const expectedProject = await request(app)
+        .post(`/teams/${team.id}/projects`)
+        .send(project)
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
-      const actualUser = await request(app)
-        .get(`/teams/${team.id}/users/${expectedUser.id}`)
+      const actualProject = await request(app)
+        .get(`/teams/${team.id}/projects/${expectedProject.id}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .then(res => res.body);
 
-      expect(actualUser).toEqual(expectedUser);
+      expect(actualProject).toEqual(expectedProject);
     });
 
-    test('returns 404 for nonexistent User', async () => {
+    test('returns 404 for nonexistent Project', async () => {
       const response = await request(app)
-        .get(`/teams/${team.id}/users/nonexistent`)
+        .get(`/teams/${team.id}/projects/nonexistent`)
         .expect('Content-Type', /text\/plain/)
         .expect(404)
         .then(res => res.text);
@@ -76,53 +76,53 @@ describe('User Controller', () => {
   });
 
   describe('#update', () => {
-    test('updates User', async () => {
-      const user = await request(app)
-        .post(`/teams/${team.id}/users`)
-        .send({ name: 'User' })
+    test('updates Project', async () => {
+      const project = await request(app)
+        .post(`/teams/${team.id}/projects`)
+        .send({ name: 'Project' })
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
-      const newUser = { ...user, name: 'New User' };
-      const expectedUser = await request(app)
-        .put(`/teams/${team.id}/users/${user.id}`)
-        .send(newUser)
+      const newProject = { ...project, name: 'New Project' };
+      const expectedProject = await request(app)
+        .put(`/teams/${team.id}/Projects/${project.id}`)
+        .send(newProject)
         .expect('Content-Type', /json/)
         .expect(200)
         .then(res => res.body);
 
-      const actualUser = await request(app)
-        .get(`/teams/${team.id}/users/${expectedUser.id}`)
+      const actualProject = await request(app)
+        .get(`/teams/${team.id}/projects/${expectedProject.id}`)
         .expect('Content-Type', /json/)
         .expect(200)
         .then(res => res.body);
 
-      expect(actualUser).toEqual(expectedUser);
+      expect(actualProject).toEqual(expectedProject);
     });
   });
 
   describe('#delete', () => {
-    test('deletes User', async () => {
-      const user = await request(app)
-        .post(`/teams/${team.id}/users`)
-        .send({ name: 'User' })
+    test('deletes Project', async () => {
+      const project = await request(app)
+        .post(`/teams/${team.id}/projects`)
+        .send({ name: 'Project' })
         .expect('Content-Type', /json/)
         .expect(201)
         .then(res => res.body);
 
       await request(app)
-        .delete(`/teams/${team.id}/users/${user.id}`)
+        .delete(`/teams/${team.id}/projects/${project.id}`)
         .expect(204)
         .then(res => res.body);
 
       const response = await request(app)
-        .get(`/teams/${team.id}/users/${user.id}`)
+        .get(`/teams/${team.id}/projects/${project.id}`)
         .expect('Content-Type', /text\/plain/)
         .expect(404)
         .then(res => res.text);
 
-      expect(response).toEqual(expect.stringMatching(/Couldn't find User/));
+      expect(response).toEqual(expect.stringMatching(/Couldn't find Project/));
     });
   });
 });

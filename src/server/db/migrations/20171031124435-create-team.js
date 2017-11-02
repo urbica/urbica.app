@@ -1,3 +1,5 @@
+/* eslint-disable no-new-wrappers */
+
 exports.up = db =>
   db.createTable('teams', {
     id: {
@@ -10,6 +12,20 @@ exports.up = db =>
     name: {
       type: 'string',
       notNull: true
+    },
+    created_at: {
+      type: 'timestamp',
+      notNull: true,
+      defaultValue: new String('NOW()')
+    },
+    updated_at: {
+      type: 'timestamp',
+      notNull: true,
+      defaultValue: new String('NOW()')
+    },
+    deleted_at: {
+      type: 'timestamp',
+      notNull: false
     }
   });
 
