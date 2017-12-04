@@ -1,6 +1,7 @@
 # urbica.io
 
 [![CircleCI](https://circleci.com/gh/urbica/urbica.io.svg?style=svg)](https://circleci.com/gh/urbica/urbica.io)
+[![Greenkeeper badge](https://badges.greenkeeper.io/urbica/urbica.io.svg)](https://greenkeeper.io/)
 
 ## Development
 
