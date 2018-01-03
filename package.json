@@ -68,7 +68,7 @@
     "flow-typed": "2.2.3",
     "jest": "22.0.0",
     "nodemon": "1.14.1",
-    "standard-version": "4.2.0",
+    "standard-version": "4.3.0",
     "supertest": "3.0.0"
   }
 }
