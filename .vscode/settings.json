@@ -1,0 +1,4 @@
+{
+  "eslint.workingDirectories": ["./api", "./studio"],
+  "git.ignoreLimitWarning": true
+}

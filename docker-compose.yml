@@ -1,0 +1,115 @@
+version: '3.6'
+
+services:
+  studio:
+    build:
+      context: ./studio
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 3000:3000
+    volumes:
+      - ./studio:/usr/src/app
+      - /usr/src/app/node_modules
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      - MONGODB_URL=mongodb://mongo/db
+    ports:
+      - 4000:3000
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+      - /var/run/docker.sock:/tmp/docker.sock
+
+  mongo:
+    image: mongo:3.6
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo:/data/db
+
+  consul:
+    image: consul:1.0.7
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    ports:
+      - 8500:8500
+
+  registrator:
+    image: gliderlabs/registrator:latest
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: "consul://consul:8500"
+
+  # consul-server:
+  #   image: consul:1.0.7
+  #   command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
+
+  # consul-server-bootstrap:
+  #   image: consul:1.0.7
+  #   ports:
+  #     - "8400:8400"
+  #     - "8500:8500"
+  #     - "8600:8600"
+  #   command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
+
+  # consul-server:
+  #   image: consul:1.0.7
+  #   # network_mode: host
+  #   environment:
+  #     - CONSUL_BIND_INTERFACE=eth0
+  #     # - CONSUL_CLIENT_INTERFACE=eth0
+  #   ports:
+  #     - 8400:8400
+  #     - 8500:8500
+  #     - 8600:8600
+  #   # volumes:
+  #   #   - ./consul:/consul/data
+  #   command: "agent -server -bootstrap-expect 3 -ui"
+
+  # consul-agent:
+  #   image: consul:1.0.7
+  #   network_mode: host
+  #   environment:
+  #     - CONSUL_BIND_INTERFACE=eth0
+  #     - CONSUL_CLIENT_INTERFACE=eth0
+  #   command: "agent -retry-join consul-server-bootstrap"
+
+  # consul-server:
+  #   image: consul:1.0.7
+  #   network_mode: host
+  #   environment:
+  #     - CONSUL_BIND_INTERFACE=eth0
+  #     - CONSUL_CLIENT_INTERFACE=eth0
+  #   ports:
+  #     - 8400:8400
+  #     - 8500:8500
+  #     - 8600:8600
+  #   # volumes:
+  #   #   - ./consul:/consul/data
+  #   command: "agent -server -bootstrap-expect 1 -ui"
+
+  # martin:
+  #   image: urbica/martin:dev
+  #   restart: always
+  #   environment:
+  #     - RUST_LOG=actix_web=info,martin=debug
+  #     - DATABASE_URL=postgres://postgres@db/db
+  #   depends_on:
+  #     - db
+
+  # db:
+  #   image: mdillon/postgis:10-alpine
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_DB=db
+  #   volumes:
+  #     - ./db:/var/lib/postgresql/data

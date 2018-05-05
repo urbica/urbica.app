@@ -1,0 +1,35 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "bluebird": "3.5.1",
+    "dockerode": "2.5.5",
+    "dotenv": "5.0.1",
+    "koa": "2.5.0",
+    "koa-bodyparser": "4.2.0",
+    "koa-logger": "3.2.0",
+    "koa-mount": "3.0.0",
+    "koa-router": "7.4.0",
+    "mongoose": "5.0.15",
+    "nodemon": "1.17.3"
+  },
+  "devDependencies": {
+    "commitizen": "2.9.6",
+    "cz-conventional-changelog": "2.1.0",
+    "eslint": "4.19.1",
+    "eslint-config-airbnb-base": "12.1.0",
+    "eslint-config-prettier": "2.9.0",
+    "eslint-plugin-import": "2.11.0",
+    "husky": "0.14.3",
+    "lint-staged": "7.0.4",
+    "nodemon": "1.17.3",
+    "prettier": "1.12.1",
+    "prettier-eslint": "8.8.1",
+    "prettier-eslint-cli": "4.7.1",
+    "standard-version": "4.3.0"
+  }
+}
